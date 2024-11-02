@@ -1,2 +1,2 @@
-# benchmarks
-The collection of benchmarks testing stable-fs performance from different perspectives
+# Benchmarks
+A collection of benchmarks to evaluate ic-rusqlite, ic-wasi-polyfill, and stable-fs performance.
