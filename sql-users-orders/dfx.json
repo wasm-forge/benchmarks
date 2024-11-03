@@ -1,0 +1,19 @@
+{
+  "canisters": {
+    "sql-users-orders-backend": {
+      "candid": "src/sql-users-orders-backend/sql-users-orders-backend.did",
+      "package": "sql-users-orders-backend",
+      "build": "./scripts/build.sh",
+      "wasm": "target/wasm32-wasi/release/no_wasi.wasm.gz",
+      "type": "custom"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

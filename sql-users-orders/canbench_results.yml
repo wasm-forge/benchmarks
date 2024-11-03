@@ -1,0 +1,44 @@
+benches:
+  bench_add_100_indexed_orders:
+    total:
+      instructions: 16011736
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_indices:
+    total:
+      instructions: 6250882970
+      heap_increase: 697
+      stable_memory_increase: 128
+    scopes: {}
+  bench_add_orders:
+    total:
+      instructions: 20350370367
+      heap_increase: 577
+      stable_memory_increase: 640
+    scopes: {}
+  bench_add_users:
+    total:
+      instructions: 1921469883
+      heap_increase: 96
+      stable_memory_increase: 0
+    scopes: {}
+  bench_create_indexed_orders:
+    total:
+      instructions: 30539495636
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_remove_100_indexed_orders:
+    total:
+      instructions: 52445926
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_select_with_join:
+    total:
+      instructions: 205171499
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+version: 0.1.7

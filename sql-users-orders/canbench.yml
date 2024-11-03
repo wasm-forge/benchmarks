@@ -1,0 +1,6 @@
+build_cmd:
+  ./scripts/build.sh
+
+wasm_path:
+  ./target/wasm32-wasi/release/sql_users_orders_backend.wasm
+
