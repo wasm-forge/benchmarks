@@ -1,44 +1,62 @@
 benches:
   bench_add_100_indexed_orders:
     total:
-      instructions: 16011736
+      instructions: 427591027
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_add_indices:
     total:
-      instructions: 6250882970
-      heap_increase: 697
+      instructions: 6820750468
+      heap_increase: 644
       stable_memory_increase: 128
     scopes: {}
   bench_add_orders:
     total:
-      instructions: 20350370367
-      heap_increase: 577
+      instructions: 52030543831
+      heap_increase: 4
       stable_memory_increase: 640
+    scopes: {}
+  bench_add_remove_durability:
+    total:
+      instructions: 622689760746
+      heap_increase: 0
+      stable_memory_increase: 128
     scopes: {}
   bench_add_users:
     total:
-      instructions: 1921469883
-      heap_increase: 96
+      instructions: 2057843765
+      heap_increase: 32
       stable_memory_increase: 0
     scopes: {}
   bench_create_indexed_orders:
     total:
-      instructions: 30539495636
+      instructions: 42482744093
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_remove_100_indexed_orders:
     total:
-      instructions: 52445926
+      instructions: 2239991853
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_select_like_on_indexed_field:
+    total:
+      instructions: 846763825
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_select_with_join:
     total:
-      instructions: 205171499
+      instructions: 251123085
       heap_increase: 0
       stable_memory_increase: 0
+    scopes: {}
+  bench_transaction_rollback:
+    total:
+      instructions: 8089875577
+      heap_increase: 0
+      stable_memory_increase: 256
     scopes: {}
 version: 0.1.7
