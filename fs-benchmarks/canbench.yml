@@ -1,0 +1,6 @@
+build_cmd:
+  ./scripts/build.sh
+
+wasm_path:
+  ./target/wasm32-unknown-unknown/release/fs_benchmarks_backend.wasm
+

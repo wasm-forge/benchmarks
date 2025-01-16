@@ -1,0 +1,56 @@
+benches:
+  read_100mb:
+    total:
+      instructions: 142341328
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  read_100mb_in_segments:
+    total:
+      instructions: 620996287
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  read_100mb_in_segments_from_10_files:
+    total:
+      instructions: 736884329
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  write_100mb:
+    total:
+      instructions: 1316512044
+      heap_increase: 0
+      stable_memory_increase: 1536
+    scopes: {}
+  write_100mb_in_segments:
+    total:
+      instructions: 2258305651
+      heap_increase: 0
+      stable_memory_increase: 1536
+    scopes: {}
+  write_100mb_in_segments_10_files:
+    total:
+      instructions: 2285838685
+      heap_increase: 0
+      stable_memory_increase: 2433
+    scopes: {}
+  write_100mb_in_segments_over_existing:
+    total:
+      instructions: 655886872
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  write_100mb_in_segments_over_existing_10_files:
+    total:
+      instructions: 819297506
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  write_100mb_over_existing:
+    total:
+      instructions: 142734020
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+version: 0.1.7

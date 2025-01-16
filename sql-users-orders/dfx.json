@@ -4,7 +4,7 @@
       "candid": "src/sql-users-orders-backend/sql-users-orders-backend.did",
       "package": "sql-users-orders-backend",
       "build": "./scripts/build.sh",
-      "wasm": "target/wasm32-wasi/release/no_wasi.wasm.gz",
+      "wasm": "target/wasm32-wasip1/release/no_wasi.wasm.gz",
       "type": "custom"
     }
   },
