@@ -11,6 +11,7 @@ Install and launch canbench:
 
 ## Benchmarking stable-fs v0.7.1
 
+```
 ---------------------------------------------------
 
 Benchmark: write_100mb
@@ -84,9 +85,11 @@ Benchmark: read_100mb_in_segments_from_10_files
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
+```
 
 ## Benchmarking stable-fs v0.7.1 on mounted memory files
 
+```
 ---------------------------------------------------
 
 Benchmark: write_100mb
@@ -160,6 +163,6 @@ Benchmark: read_100mb_in_segments_from_10_files
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
-
+```
 
 
