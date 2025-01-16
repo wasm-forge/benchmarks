@@ -10,11 +10,18 @@ Install and launch canbench:
 ```
 
 ## Benchmarking stable-fs v0.7.1
+<table>
+<tr>
+<th> regular files, 16K chunk size </th>
+<th> mounted memory files </th>
+</tr>
+<tr>
+<td>
 
-```
----------------------------------------------------
 
-Benchmark: write_100mb
+<pre>---------------------------------------------------
+
+Benchmark: <b>write_100mb</b>
   total:
     instructions: 1.32 B (no change)
     heap_increase: 0 pages (no change)
@@ -22,7 +29,7 @@ Benchmark: write_100mb
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_over_existing
+Benchmark: <b>write_100mb_over_existing</b>
   total:
     instructions: 142.73 M (no change)
     heap_increase: 0 pages (no change)
@@ -30,7 +37,7 @@ Benchmark: write_100mb_over_existing
 
 ---------------------------------------------------
 
-Benchmark: read_100mb
+Benchmark: <b>read_100mb</b>
   total:
     instructions: 142.34 M (no change)
     heap_increase: 0 pages (no change)
@@ -38,7 +45,7 @@ Benchmark: read_100mb
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments
+Benchmark: <b>write_100mb_in_segments</b>
   total:
     instructions: 2.26 B (no change)
     heap_increase: 0 pages (no change)
@@ -46,7 +53,7 @@ Benchmark: write_100mb_in_segments
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments_over_existing
+Benchmark: <b>write_100mb_in_segments_over_existing</b>
   total:
     instructions: 655.89 M (no change)
     heap_increase: 0 pages (no change)
@@ -54,7 +61,7 @@ Benchmark: write_100mb_in_segments_over_existing
 
 ---------------------------------------------------
 
-Benchmark: read_100mb_in_segments
+Benchmark: <b>read_100mb_in_segments</b>
   total:
     instructions: 621.00 M (no change)
     heap_increase: 0 pages (no change)
@@ -62,7 +69,7 @@ Benchmark: read_100mb_in_segments
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments_10_files
+Benchmark: <b>write_100mb_in_segments_10_files</b>
   total:
     instructions: 2.29 B (no change)
     heap_increase: 0 pages (no change)
@@ -70,7 +77,7 @@ Benchmark: write_100mb_in_segments_10_files
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments_over_existing_10_files
+Benchmark: <b>write_100mb_in_segments_over_existing_10_files</b>
   total:
     instructions: 819.30 M (no change)
     heap_increase: 0 pages (no change)
@@ -78,17 +85,18 @@ Benchmark: write_100mb_in_segments_over_existing_10_files
 
 ---------------------------------------------------
 
-Benchmark: read_100mb_in_segments_from_10_files
+Benchmark: <b>read_100mb_in_segments_from_10_files</b>
   total:
     instructions: 736.88 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
-```
+</pre>
 
-## Benchmarking stable-fs v0.7.1 on mounted memory files
 
+</td>
+<td>
 
 <pre>---------------------------------------------------
 
@@ -164,3 +172,11 @@ Benchmark: <b>read_100mb_in_segments_from_10_files</b>
 
 ---------------------------------------------------
 </pre>
+
+
+</td>
+</tr>
+</table>
+
+
+
