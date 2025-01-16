@@ -89,80 +89,78 @@ Benchmark: read_100mb_in_segments_from_10_files
 
 ## Benchmarking stable-fs v0.7.1 on mounted memory files
 
-```
----------------------------------------------------
 
-Benchmark: write_100mb
+<pre>---------------------------------------------------
+
+Benchmark: <b>write_100mb</b>
   total:
-    instructions: 124.45 M (improved by 90.55%)
+    <font color="#8AE234"><b>instructions: 124.45 M (improved by 90.55%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 1536 pages (no change)
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_over_existing
+Benchmark: <b>write_100mb_over_existing</b>
   total:
-    instructions: 100.01 M (improved by 29.93%)
+    <font color="#8AE234"><b>instructions: 100.01 M (improved by 29.93%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
 
-Benchmark: read_100mb
+Benchmark: <b>read_100mb</b>
   total:
-    instructions: 100.02 M (improved by 29.74%)
+    <font color="#8AE234"><b>instructions: 100.02 M (improved by 29.74%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments
+Benchmark: <b>write_100mb_in_segments</b>
   total:
-    instructions: 918.28 M (improved by 59.34%)
+    <font color="#8AE234"><b>instructions: 918.28 M (improved by 59.34%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 1536 pages (no change)
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments_over_existing
+Benchmark: <b>write_100mb_in_segments_over_existing</b>
   total:
-    instructions: 519.91 M (improved by 20.73%)
+    <font color="#8AE234"><b>instructions: 519.91 M (improved by 20.73%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
 
-Benchmark: read_100mb_in_segments
+Benchmark: <b>read_100mb_in_segments</b>
   total:
-    instructions: 476.11 M (improved by 23.33%)
+    <font color="#8AE234"><b>instructions: 476.11 M (improved by 23.33%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments_10_files
+Benchmark: <b>write_100mb_in_segments_10_files</b>
   total:
-    instructions: 1.11 B (improved by 51.48%)
+    <font color="#8AE234"><b>instructions: 1.11 B (improved by 51.48%)</b></font>
     heap_increase: 0 pages (no change)
-    stable_memory_increase: 3585 pages (regressed by 47.35%)
+    <font color="#EF2929"><b>stable_memory_increase: 3585 pages (regressed by 47.35%)</b></font>
 
 ---------------------------------------------------
 
-Benchmark: write_100mb_in_segments_over_existing_10_files
+Benchmark: <b>write_100mb_in_segments_over_existing_10_files</b>
   total:
-    instructions: 699.55 M (improved by 14.62%)
-    heap_increase: 0 pages (no change)
-    stable_memory_increase: 0 pages (no change)
-
----------------------------------------------------
-
-Benchmark: read_100mb_in_segments_from_10_files
-  total:
-    instructions: 655.03 M (improved by 11.11%)
+    <font color="#8AE234"><b>instructions: 699.55 M (improved by 14.62%)</b></font>
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
-```
 
+Benchmark: <b>read_100mb_in_segments_from_10_files</b>
+  total:
+    <font color="#8AE234"><b>instructions: 655.03 M (improved by 11.11%)</b></font>
+    heap_increase: 0 pages (no change)
+    stable_memory_increase: 0 pages (no change)
 
+---------------------------------------------------
+</pre>
