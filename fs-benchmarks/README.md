@@ -5,3 +5,7 @@ Benchmarks designed to test performance of the stable-fs file system implementat
 ## Usage
 
 Install and launch canbench:
+```bash
+  cargo install canbench
+```
+
