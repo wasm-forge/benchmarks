@@ -10,6 +10,8 @@ use stable_fs::fs::OpenFlags;
 use stable_fs::fs::SrcBuf;
 use stable_fs::fs::Whence;
 
+use stable_fs::error::Error;
+
 use stable_fs::storage::stable::StableStorage;
 use stable_fs::storage::types::FileType;
 
@@ -18,7 +20,7 @@ use std::cell::RefCell;
 const SEGMENT_SIZE: usize = 1000usize;
 const FILES_COUNT: usize = 10usize;
 
-const USE_MOUNTED_MEMORY: bool = true;
+const USE_MOUNTED_MEMORY: bool = false;
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -31,9 +33,9 @@ thread_local! {
             let memory_manager = m.borrow();
 
             //v0.4
-            //let storage = StableStorage::new_with_memory_manager(&memory_manager, 200u8);
+            let storage = StableStorage::new_with_memory_manager(&memory_manager, 200u8);
             //v0.5, v0.6 ...
-            let mut storage = StableStorage::new_with_memory_manager(&memory_manager, 200..210u8);
+            //let mut storage = StableStorage::new_with_memory_manager(&memory_manager, 200..210u8);
 
             // set chunk version to V1
             //storage.set_chunk_type(storage::stable::ChunkType::V1);
@@ -50,10 +52,10 @@ thread_local! {
             if USE_MOUNTED_MEMORY {
                 let filename = "file.txt";
 
-                fs.borrow_mut().mount_memory_file(filename, Box::new(memory_manager.get(MemoryId::new(15)))).unwrap();
+                //fs.borrow_mut().mount_memory_file(filename, Box::new(memory_manager.get(MemoryId::new(15)))).unwrap();
 
                 for i in 0..FILES_COUNT {
-                    fs.borrow_mut().mount_memory_file(&format!("{}{}", filename, i), Box::new(memory_manager.get(MemoryId::new(15 + i as u8)))).unwrap();
+                //    fs.borrow_mut().mount_memory_file(&format!("{}{}", filename, i), Box::new(memory_manager.get(MemoryId::new(15 + i as u8)))).unwrap();
                 }
             }
 
@@ -62,21 +64,35 @@ thread_local! {
     };
 }
 
+fn open_file(
+    fs: &mut FileSystem,
+    root_fd: Fd,
+    filename: &str,
+    fdstat: FdStat,
+    open_flags: OpenFlags,
+    ctime: u64,
+) -> Result<Fd, Error> {
+    // v0.7
+    //fs.open(root_fd, filename, fdstat, open_flags, ctime)
+    // below v0.7
+    fs.open_or_create(root_fd, filename, fdstat, open_flags, ctime)
+}
+
 fn file_size(filename: String) -> usize {
     FS.with(|fs| {
         let mut fs = fs.borrow_mut();
 
         let dir = fs.root_fd();
 
-        let fd = fs
-            .open(
-                dir,
-                filename.as_str(),
-                FdStat::default(),
-                OpenFlags::empty(),
-                0,
-            )
-            .unwrap();
+        let fd = open_file(
+            &mut fs,
+            dir,
+            filename.as_str(),
+            FdStat::default(),
+            OpenFlags::empty(),
+            0,
+        )
+        .unwrap();
 
         let meta = fs.metadata(fd).unwrap();
 
@@ -183,9 +199,15 @@ pub fn store_buffer(filename: String) -> usize {
 
             let root_fd = (*fs).root_fd();
 
-            let fd = (*fs)
-                .open(root_fd, &filename, FdStat::default(), OpenFlags::CREATE, 42)
-                .unwrap();
+            let fd = open_file(
+                &mut fs,
+                root_fd,
+                &filename,
+                FdStat::default(),
+                OpenFlags::CREATE,
+                42,
+            )
+            .unwrap();
 
             let write_content = [SrcBuf {
                 buf: chunk.as_ptr(),
@@ -216,9 +238,15 @@ pub fn store_buffer_in_1000b_segments(filename: String) -> (u64, usize) {
 
             let root_fd = (*fs).root_fd();
 
-            let fd = (*fs)
-                .open(root_fd, &filename, FdStat::default(), OpenFlags::CREATE, 42)
-                .unwrap();
+            let fd = open_file(
+                &mut fs,
+                root_fd,
+                &filename,
+                FdStat::default(),
+                OpenFlags::CREATE,
+                42,
+            )
+            .unwrap();
 
             (*fs).seek(fd, 0, Whence::SET).unwrap();
 
@@ -268,15 +296,15 @@ pub fn store_buffer_in_1000b_segments_10_files(filename: String) -> (u64, usize)
             let mut fds = Vec::<Fd>::new();
 
             for i in 0..FILES_COUNT {
-                let fd = (*fs)
-                    .open(
-                        root_fd,
-                        &format!("{}{}", filename, i),
-                        FdStat::default(),
-                        OpenFlags::CREATE,
-                        42,
-                    )
-                    .unwrap();
+                let fd = open_file(
+                    &mut fs,
+                    root_fd,
+                    &format!("{}{}", filename, i),
+                    FdStat::default(),
+                    OpenFlags::CREATE,
+                    42,
+                )
+                .unwrap();
 
                 (*fs).seek(fd, 0, Whence::SET).unwrap();
 
@@ -331,9 +359,15 @@ pub fn load_buffer(filename: String) -> (u64, usize) {
 
             let root_fd = (*fs).root_fd();
 
-            let fd = (*fs)
-                .open(root_fd, &filename, FdStat::default(), OpenFlags::CREATE, 42)
-                .unwrap();
+            let fd = open_file(
+                &mut fs,
+                root_fd,
+                &filename,
+                FdStat::default(),
+                OpenFlags::CREATE,
+                42,
+            )
+            .unwrap();
 
             let size = (*fs).metadata(fd).unwrap().size as usize;
 
@@ -370,9 +404,15 @@ pub fn load_buffer_in_1000b_segments(filename: String) -> (u64, usize) {
 
             let root_fd = (*fs).root_fd();
 
-            let fd = (*fs)
-                .open(root_fd, &filename, FdStat::default(), OpenFlags::CREATE, 42)
-                .unwrap();
+            let fd = open_file(
+                &mut fs,
+                root_fd,
+                &filename,
+                FdStat::default(),
+                OpenFlags::CREATE,
+                42,
+            )
+            .unwrap();
 
             let len = (*fs).metadata(fd).unwrap().size as usize;
 
@@ -422,15 +462,15 @@ pub fn load_buffer_in_1000b_segments_10_files(filename: String) -> (u64, usize) 
             let mut fds = Vec::<Fd>::new();
 
             for i in 0..FILES_COUNT {
-                let fd = (*fs)
-                    .open(
-                        root_fd,
-                        &format!("{}{}", filename, i),
-                        FdStat::default(),
-                        OpenFlags::CREATE,
-                        42,
-                    )
-                    .unwrap();
+                let fd = open_file(
+                    &mut fs,
+                    root_fd,
+                    &format!("{}{}", filename, i),
+                    FdStat::default(),
+                    OpenFlags::CREATE,
+                    42,
+                )
+                .unwrap();
 
                 (*fs).seek(fd, 0, Whence::SET).unwrap();
                 fds.push(fd);
