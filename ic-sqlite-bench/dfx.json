@@ -1,0 +1,19 @@
+{
+  "canisters": {
+    "ic-sqlite-bench-backend": {
+      "candid": "src/ic-sqlite-bench-backend/ic-sqlite-bench-backend.did",
+      "package": "ic-sqlite-bench-backend",
+      "build": "./scripts/build.sh",
+      "wasm": "target/wasm32-wasip1/release/no_wasi.wasm.gz",
+      "type": "custom"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

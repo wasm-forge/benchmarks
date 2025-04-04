@@ -1,0 +1,21 @@
+[package]
+name = "ic-sqlite-bench-backend"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+candid = "0.10.13"
+ic-cdk = "0.17.1"
+ic-cdk-macros = "0.17.1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
+
+ic-wasi-polyfill = { version = "0.8" }
+ic-stable-structures = "0.6.7"
+rusqlite = { version = "0.34", features = ["bundled", "wasm32-wasi-vfs"] }
+lazy_static = "1.5.0"

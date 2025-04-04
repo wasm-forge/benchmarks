@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/ic-sqlite-bench-backend"
+]
+resolver = "2"
