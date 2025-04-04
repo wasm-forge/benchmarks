@@ -1,7 +1,5 @@
 ## ic-sqlite benchmark test comparison with the similar setup on ic-wasi-polyfill
 
-## Summary
-
 This is the benchmark from the [ic-sqlite](https://github.com/froghub-io/ic-sqlite/) project running on the fresh rusqlite via ic-wasi-polyfill with the mounted memory storage setup.
 
 *Note:* The original ic-sqlite benchmarks were also re-run with the latest `dfx` to make sure they are objective, but they are now different from the ones reported in [ic-sqlite](https://github.com/froghub-io/ic-sqlite/).
