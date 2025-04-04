@@ -2,11 +2,11 @@
 
 ## Summary
 
-This is the benchmark from the (ic-sqlite)[] project running on the fresh rusqlite via ic-wasi-polyfill with the mounted memory storage setup.
+This is the benchmark from the [ic-sqlite](https://github.com/froghub-io/ic-sqlite/) project running on the fresh rusqlite via ic-wasi-polyfill with the mounted memory storage setup.
 
 *Note:* The original ic-sqlite benchmarks were also re-run with the latest `dfx` to make sure they are objective, but they are now different from the ones reported in [ic-sqlite](https://github.com/froghub-io/ic-sqlite/).
 
-#### [Performance benchmarks for SQL commands] comaring [ic-sqlite](https://github.com/froghub-io/ic-sqlite/) vs ic-wasi-polyfill
+#### Performance benchmarks for SQL commands: comaring ic-sqlite and ic-wasi-polyfill
 
 | SQL <br/> commands               | performance counter <br/> 1w single table data | performance counter <br/> 10w single table data | performance counter <br/> 50w single table data | performance counter <br/> 100w single table data |
 |----------------------------------|------------------------------------------------|-------------------------------------------------|-------------------------------------------------|--------------------------------------------------|
