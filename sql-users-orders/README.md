@@ -25,7 +25,7 @@ Install wasi2ic and canbench:
 
 To run benchmarks, launch the `canbench` command.
 
-## Benchmark settings
+## Pragma settings
 
 This shows the current benchmark results for database performance based on a database file that writes directly to a stable memory (minimized chunked storage overheads).
 
@@ -40,8 +40,7 @@ Pragma         | Value                   | Description
 [temp_store](https://sqlite.org/pragma.html#temp_store)              | MEMORY       | causes to keep the temporary data in memory, at the moment this is necessary to avoid sqlite cash during complex queries
 [cache_size](https://sqlite.org/pragma.html#cache_size)              | 1000000      | gives a significant performance boost at the expence of the canister memory used. (It tries to keep the whole database in memory, thus reducing read operation request count)
 
-### Database structure
-
+## Database structure
 
 ``` sql
 CREATE TABLE users (
