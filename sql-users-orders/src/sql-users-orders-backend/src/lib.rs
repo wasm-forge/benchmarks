@@ -37,12 +37,11 @@ fn set_pragmas() {
         let mut db = db.borrow_mut();
         let db = db.as_mut().unwrap();
 
-        // do not create and destroy the journal file every time, set its size to 0 instead.
-        // This option works faster for normal files,
-        db.pragma_update(None, "journal_mode", &"TRUNCATE" as &dyn ToSql)
+        // persist journal file. Setting to `OFF` will work faster but the atomic COMMIT/ROLLBACK operations will not work (see documentation).
+        db.pragma_update(None, "journal_mode", &"PERSIST" as &dyn ToSql)
             .unwrap();
 
-        // reduce synchronizations
+        // reduce synchronizations.
         db.pragma_update(None, "synchronous", &"NORMAL" as &dyn ToSql)
             .unwrap();
 
@@ -85,16 +84,17 @@ fn mount_memory_files() {
             Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID))),
         );
 
-        /*  +10% performance on some operations
+        // 5 - 7% performance improvement on some operations
         ic_wasi_polyfill::mount_memory_file(
             JOURNAL_NAME,
             Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID + 1))),
         );
+
+        /*
         ic_wasi_polyfill::mount_memory_file(
             WAL_NAME,
             Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID + 2))),
         );
-
          */
     });
 }
@@ -383,7 +383,7 @@ mod benches {
     }
 
     #[bench(raw)]
-    fn bench_create_indexed_orders() -> BenchResult {
+    fn bench_create_1000000_indexed_orders() -> BenchResult {
         let user_count = COUNT / 10;
         add_users(0, user_count).unwrap();
         add_orders(0, COUNT, user_count).unwrap();
@@ -396,38 +396,19 @@ mod benches {
     }
 
     #[bench(raw)]
-    fn bench_add_remove_durability() -> BenchResult {
+    fn bench_delete_100000_indexed_orders_and_rollback() -> BenchResult {
         let user_count = COUNT / 10;
         add_users(0, user_count).unwrap();
         add_orders(0, COUNT, user_count).unwrap();
         create_indices();
 
-        bench_fn(|| {
-            for i in 0..100 {
-                let idx1 = i * 100;
-                let idx2 = (i + 1) * 100;
-                execute(&format!(
-                    "DELETE FROM orders WHERE user_id > {idx1} AND user_id <= {idx2} "
-                ));
-                add_orders(0, 1000, user_count).unwrap();
-            }
-        })
-    }
+        let res = query("SELECT COUNT(*) FROM orders".to_string()).unwrap();
+        let s = res[0][0].clone().unwrap();
+        let cnt: i64 = s.parse().expect("Not a valid number");
 
-    #[bench(raw)]
-    fn bench_transaction_rollback() -> BenchResult {
-        let user_count = COUNT / 10;
-        add_users(0, user_count).unwrap();
-        add_orders(0, COUNT, user_count).unwrap();
-        create_indices();
+        assert_eq!(cnt, 1000000);
 
-        bench_fn(|| {
-            let res = query("SELECT COUNT(*) FROM orders".to_string()).unwrap();
-            let s = res[0][0].clone().unwrap();
-            let cnt: i64 = s.parse().expect("Not a valid number");
-
-            assert_eq!(cnt, 1000000);
-
+        let result = bench_fn(|| {
             execute("BEGIN TRANSACTION");
             execute("DELETE FROM orders WHERE order_id > 900000");
 
@@ -438,12 +419,14 @@ mod benches {
             assert_eq!(cnt, 900000);
 
             execute("ROLLBACK");
+        });
 
-            let res = query("SELECT COUNT(*) FROM orders".to_string()).unwrap();
-            let s = res[0][0].clone().unwrap();
-            let cnt: i64 = s.parse().expect("Not a valid number");
+        let res = query("SELECT COUNT(*) FROM orders".to_string()).unwrap();
+        let s = res[0][0].clone().unwrap();
+        let cnt: i64 = s.parse().expect("Not a valid number");
 
-            assert_eq!(cnt, 1000000);
-        })
+        assert_eq!(cnt, 1000000);
+
+        result
     }
 }
