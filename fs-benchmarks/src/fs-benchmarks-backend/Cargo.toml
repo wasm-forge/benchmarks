@@ -14,7 +14,4 @@ ic-cdk-timers = "0.11"
 ic-stable-structures = "0.6.7"
 
 # change to see the performance improvement
-stable-fs = "0.4"
-
-
-
+stable-fs = "0.8"

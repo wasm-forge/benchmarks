@@ -33,9 +33,9 @@ thread_local! {
             let memory_manager = m.borrow();
 
             //v0.4
-            let storage = StableStorage::new_with_memory_manager(&memory_manager, 200u8);
+            //let storage = StableStorage::new_with_memory_manager(&memory_manager, 200u8);
             //v0.5, v0.6 ...
-            //let mut storage = StableStorage::new_with_memory_manager(&memory_manager, 200..210u8);
+            let mut storage = StableStorage::new_with_memory_manager(&memory_manager, 200..210u8);
 
             // set chunk version to V1
             //storage.set_chunk_type(storage::stable::ChunkType::V1);
@@ -73,9 +73,9 @@ fn open_file(
     ctime: u64,
 ) -> Result<Fd, Error> {
     // v0.7
-    //fs.open(root_fd, filename, fdstat, open_flags, ctime)
+    fs.open(root_fd, filename, fdstat, open_flags, ctime)
     // below v0.7
-    fs.open_or_create(root_fd, filename, fdstat, open_flags, ctime)
+    //fs.open_or_create(root_fd, filename, fdstat, open_flags, ctime)
 }
 
 fn file_size(filename: String) -> usize {
