@@ -9,17 +9,19 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
-canbench-rs = { version = "0.1.4"}
+canbench-rs = { version = "0.1.16"}
 candid = "0.10"
-ic-cdk = "0.17.1"
+ic-cdk = "0.17.2"
 hex = "0.4.3"
 serde = "1.0.164"
 serde_json = "1.0.97"
 
 #ic-wasi-polyfill = {version = "0.5", features = ["report_wasi_calls"]}
-ic-wasi-polyfill = {version = "0.7", features = ["report_wasi_calls"]}
-
+ic-wasi-polyfill = {version = "0.8.1", features = ["report_wasi_calls"]}
 
 ic-stable-structures = "0.6.5"
-rusqlite = {git = "https://github.com/rusqlite/rusqlite.git", features = ["bundled", "wasm32-wasi-vfs"] }
+rusqlite = {version = "0.36.0", features = ["bundled", "wasm32-wasi-vfs"] }
 
+[build-dependencies]
+glob = "0.3"
+env = "1.0"

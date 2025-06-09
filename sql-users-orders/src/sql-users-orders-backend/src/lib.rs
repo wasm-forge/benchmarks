@@ -10,7 +10,7 @@ use ic_stable_structures::memory_manager::MemoryId;
 use ic_stable_structures::{memory_manager::MemoryManager, DefaultMemoryImpl};
 
 thread_local! {
-    static DB: RefCell<Option<Connection>> = RefCell::new(None);
+    static DB: RefCell<Option<Connection>> = const { RefCell::new(None) };
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
         RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 }
@@ -22,7 +22,6 @@ type QueryResult<T = Vec<Vec<Option<String>>>, E = Error> = std::result::Result<
 const MOUNTED_MEMORY_ID: u8 = 20;
 const DB_FILE_NAME: &str = "db.db3";
 const JOURNAL_NAME: &str = "db.db3-journal";
-const WAL_NAME: &str = "db.db3-wal";
 
 fn setup_runtime() {
     init_polyfill();
@@ -89,13 +88,6 @@ fn mount_memory_files() {
             JOURNAL_NAME,
             Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID + 1))),
         );
-
-        /*
-        ic_wasi_polyfill::mount_memory_file(
-            WAL_NAME,
-            Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID + 2))),
-        );
-         */
     });
 }
 
@@ -273,9 +265,11 @@ fn add_orders(offset: usize, count: usize, id_mod: usize) -> Result {
                 let id = (offset + i + 1) * 13 % id_mod + 1;
 
                 stmt.execute(rusqlite::params![id, (id * 100 + id * 17) / 15])
-                    .expect(&format!(
-                        "insertion of a new order failed: i = {i} count = {count} id = {id}!"
-                    ));
+                    .unwrap_or_else(|_| {
+                        panic!(
+                            "insertion of a new order failed: i = {i} count = {count} id = {id}!"
+                        )
+                    });
 
                 i += 1;
             }

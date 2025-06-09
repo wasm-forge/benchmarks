@@ -4,8 +4,10 @@ dfx canister create --all
 export WASI_TARGET=wasm32-wasip1
 export WASI_TARGET_=`echo $WASI_TARGET | tr '-' '_'`
 
-export CC_$WASI_TARGET_="/opt/wasi-sdk/bin/clang"
-export CFLAGS_$WASI_TARGET_="--sysroot=/opt/wasi-sdk/share/wasi-sysroot"
+export WASI_SDK="/opt/wasi-sdk"
+export CC_$WASI_TARGET_="$WASI_SDK/bin/clang"
+export CFLAGS_$WASI_TARGET_="--sysroot=$WASI_SDK/share/wasi-sysroot"
+export RUSTFLAGS=$RUSTFLAGS' -C target-feature=+bulk-memory'
 
 export RELEASE_DIR=target/$WASI_TARGET/release
 

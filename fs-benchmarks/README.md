@@ -9,7 +9,7 @@ Install and launch canbench:
   cargo install canbench
 ```
 
-## Benchmarking stable-fs v0.7.1
+## Benchmarking stable-fs v0.8
 <table>
 <tr>
 <th> regular files, 16K chunk size </th>
@@ -23,7 +23,7 @@ Install and launch canbench:
 
 Benchmark: <b>write_100mb</b>
   total:
-    instructions: 1.32 B (no change)
+    instructions: 729.73 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 1536 pages (no change)
 
@@ -31,7 +31,7 @@ Benchmark: <b>write_100mb</b>
 
 Benchmark: <b>write_100mb_over_existing</b>
   total:
-    instructions: 142.73 M (no change)
+    instructions: 125.65 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
@@ -39,7 +39,7 @@ Benchmark: <b>write_100mb_over_existing</b>
 
 Benchmark: <b>read_100mb</b>
   total:
-    instructions: 142.34 M (no change)
+    instructions: 125.27 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
@@ -47,7 +47,7 @@ Benchmark: <b>read_100mb</b>
 
 Benchmark: <b>write_100mb_in_segments</b>
   total:
-    instructions: 2.26 B (no change)
+    instructions: 1.50 B (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 1536 pages (no change)
 
@@ -55,7 +55,7 @@ Benchmark: <b>write_100mb_in_segments</b>
 
 Benchmark: <b>write_100mb_in_segments_over_existing</b>
   total:
-    instructions: 655.89 M (no change)
+    instructions: 549.97 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
@@ -63,7 +63,7 @@ Benchmark: <b>write_100mb_in_segments_over_existing</b>
 
 Benchmark: <b>read_100mb_in_segments</b>
   total:
-    instructions: 621.00 M (no change)
+    instructions: 541.02 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
@@ -71,7 +71,7 @@ Benchmark: <b>read_100mb_in_segments</b>
 
 Benchmark: <b>write_100mb_in_segments_10_files</b>
   total:
-    instructions: 2.29 B (no change)
+    instructions: 1.54 B (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 2433 pages (no change)
 
@@ -79,7 +79,7 @@ Benchmark: <b>write_100mb_in_segments_10_files</b>
 
 Benchmark: <b>write_100mb_in_segments_over_existing_10_files</b>
   total:
-    instructions: 819.30 M (no change)
+    instructions: 666.82 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
@@ -87,11 +87,12 @@ Benchmark: <b>write_100mb_in_segments_over_existing_10_files</b>
 
 Benchmark: <b>read_100mb_in_segments_from_10_files</b>
   total:
-    instructions: 736.88 M (no change)
+    instructions: 630.65 M (no change)
     heap_increase: 0 pages (no change)
     stable_memory_increase: 0 pages (no change)
 
 ---------------------------------------------------
+
 </pre>
 
 

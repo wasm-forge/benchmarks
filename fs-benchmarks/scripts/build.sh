@@ -4,8 +4,8 @@ dfx canister create --all
 export WASM_TARGET=wasm32-unknown-unknown
 export WASM_TARGET_=`echo $WASM_TARGET | tr '-' '_'`
 
-
 export RELEASE_DIR=target/$WASM_TARGET/release
+export RUSTFLAGS='-C target-feature=+bulk-memory'
 
 rm -f $RELEASE_DIR/*.wasm.gz $RELEASE_DIR/*.wasm 
 
