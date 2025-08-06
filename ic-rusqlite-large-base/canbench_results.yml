@@ -1,0 +1,65 @@
+benches:
+  bench_add_100_indexed_orders:
+    total:
+      calls: 1
+      instructions: 9031048
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_indices:
+    total:
+      calls: 1
+      instructions: 6272045556
+      heap_increase: 697
+      stable_memory_increase: 128
+    scopes: {}
+  bench_add_orders:
+    total:
+      calls: 1
+      instructions: 20048122680
+      heap_increase: 577
+      stable_memory_increase: 640
+    scopes: {}
+  bench_add_users:
+    total:
+      calls: 1
+      instructions: 1942448404
+      heap_increase: 96
+      stable_memory_increase: 0
+    scopes: {}
+  bench_create_1000000_indexed_orders:
+    total:
+      calls: 1
+      instructions: 29883109013
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_delete_100000_indexed_orders_and_rollback:
+    total:
+      calls: 1
+      instructions: 1525272766
+      heap_increase: 0
+      stable_memory_increase: 256
+    scopes: {}
+  bench_remove_1000_indexed_orders:
+    total:
+      calls: 1
+      instructions: 23141284
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_select_like_on_indexed_field:
+    total:
+      calls: 1
+      instructions: 781462133
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_select_with_join:
+    total:
+      calls: 1
+      instructions: 202283147
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+version: 0.2.0
