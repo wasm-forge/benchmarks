@@ -1,19 +1,22 @@
 {
   "canisters": {
-    "sql-users-orders-backend": {
+    "backend": {
       "candid": "src/sql-users-orders-backend/sql-users-orders-backend.did",
       "package": "sql-users-orders-backend",
-      "build": "./scripts/build.sh",
-      "wasm": "target/wasm32-wasip1/release/no_wasi.wasm.gz",
-      "type": "custom"
+      "build": [
+        "cargo build --release --target wasm32-wasip1",
+        "wasi2ic target/wasm32-wasip1/release/sql_users_orders_backend.wasm target/wasm32-wasip1/release/nowasi.wasm"
+      ],
+      "wasm": "target/wasm32-wasip1/release/nowasi.wasm",
+      "type": "custom",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
     }
   },
-  "defaults": {
-    "build": {
-      "args": "",
-      "packtool": ""
-    }
-  },
+  "dfx": "0.28.0",
   "output_env_file": ".env",
   "version": 1
 }

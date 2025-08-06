@@ -2,5 +2,5 @@ build_cmd:
   ./scripts/build.sh
 
 wasm_path:
-  ./target/wasm32-wasip1/release/sql_users_orders_backend.wasm
+  ./target/wasm32-wasip1/release/no_wasi.wasm
 

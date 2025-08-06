@@ -11,3 +11,4 @@ dfx canister call sql-users-orders-backend add_users "(0:nat64, $USER_COUNT)"
 
 echo adding orders
 dfx canister call sql-users-orders-backend add_orders "(0:nat64, $ORDER_COUNT, $USER_COUNT)"
+
