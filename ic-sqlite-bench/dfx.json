@@ -5,7 +5,12 @@
       "package": "ic-sqlite-bench-backend",
       "build": "./scripts/build.sh",
       "wasm": "target/wasm32-wasip1/release/no_wasi.wasm.gz",
-      "type": "custom"
+      "type": "custom",
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
     }
   },
   "defaults": {

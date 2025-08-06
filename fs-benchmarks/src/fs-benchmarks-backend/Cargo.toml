@@ -11,7 +11,7 @@ canbench-rs = "0.2.1"
 candid = "0.10.11"
 ic-cdk = "0.18.5"
 ic-cdk-timers = "0.12"
-ic-stable-structures = "0.6.8"
+ic-stable-structures = "0.7.0"
 
 # change to see the performance improvement
-stable-fs = "0.8.0"
+stable-fs = "0.9.0"
