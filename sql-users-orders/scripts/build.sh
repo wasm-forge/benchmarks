@@ -1,39 +1,16 @@
 #!/bin/bash
+
+
 dfx canister create --all
-
-export WASI_TARGET=wasm32-wasip1
-export WASI_TARGET_=`echo $WASI_TARGET | tr '-' '_'`
-
-export WASI_SDK="/opt/wasi-sdk"
-export CC_$WASI_TARGET_="$WASI_SDK/bin/clang"
-export CFLAGS_$WASI_TARGET_="--sysroot=$WASI_SDK/share/wasi-sysroot"
-export RUSTFLAGS=$RUSTFLAGS' -C target-feature=+bulk-memory'
-
-export RELEASE_DIR=target/$WASI_TARGET/release
-
-rm -f $RELEASE_DIR/*.wasm.gz $RELEASE_DIR/*.wasm 
 
 set -e
 
-pushd `pwd`
 
-if [ "$(basename "$PWD")" = "scripts" ]; then
-  cd ..
-fi
+rm -rf target/wasm32-wasip1/*.wasm
 
-export PROJECT_NAME="$(basename "$PWD")"
-export PROJECT_NAME_=`echo $PROJECT_NAME | tr '-' '_'`
+cargo build --release --target wasm32-wasip1
 
-cargo build --release --target $WASI_TARGET
+wasi2ic target/wasm32-wasip1/release/sql_users_orders_backend.wasm target/wasm32-wasip1/release/no_wasi.wasm
 
-mv $RELEASE_DIR/"$PROJECT_NAME_"_backend.wasm $RELEASE_DIR/built.wasm
+#gzip -f target/wasm32-wasip1/release/no_wasi.wasm > target/wasm32-wasip1/release/no_wasi.wasm.gz
 
-ic-wasm $RELEASE_DIR/built.wasm -o $RELEASE_DIR/meta.wasm metadata candid:service -f ./src/"$PROJECT_NAME"-backend/"$PROJECT_NAME"-backend.did -v public
-
-wasi2ic $RELEASE_DIR/meta.wasm $RELEASE_DIR/no_wasi.wasm
-
-cp $RELEASE_DIR/no_wasi.wasm $RELEASE_DIR/"$PROJECT_NAME_"_backend.wasm
-
-gzip -f $RELEASE_DIR/no_wasi.wasm > $RELEASE_DIR/no_wasi.wasm.gz
-
-popd

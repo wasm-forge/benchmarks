@@ -1,103 +1,18 @@
-use std::cell::RefCell;
-
 use candid::CandidType;
 use candid::Deserialize;
-use rusqlite::types::Type;
-use rusqlite::Connection;
-use rusqlite::ToSql;
 
-use ic_stable_structures::memory_manager::MemoryId;
-use ic_stable_structures::{memory_manager::MemoryManager, DefaultMemoryImpl};
+use ic_rusqlite::rusqlite::types::Type;
 
-thread_local! {
-    static DB: RefCell<Option<Connection>> = const { RefCell::new(None) };
-    static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
-        RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
-}
+use ic_rusqlite::with_connection;
 
 type Result<T = String, E = Error> = std::result::Result<T, E>;
 
 type QueryResult<T = Vec<Vec<Option<String>>>, E = Error> = std::result::Result<T, E>;
 
-const MOUNTED_MEMORY_ID: u8 = 20;
-const DB_FILE_NAME: &str = "db.db3";
-const JOURNAL_NAME: &str = "db.db3-journal";
-
-fn setup_runtime() {
-    init_polyfill();
-    mount_memory_files();
-    open_database();
-    set_pragmas();
-}
-
-fn set_pragmas() {
-    // set pragmas
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        let db = db.as_mut().unwrap();
-
-        // persist journal file. Setting to `OFF` will work faster but the atomic COMMIT/ROLLBACK operations will not work (see documentation).
-        db.pragma_update(None, "journal_mode", &"PERSIST" as &dyn ToSql)
-            .unwrap();
-
-        // reduce synchronizations.
-        db.pragma_update(None, "synchronous", &"NORMAL" as &dyn ToSql)
-            .unwrap();
-
-        // use fewer writes to disk with larger memory chunks.
-        // Larger page size (say 16384) gives about 10% performance improvement when adding large batches of new records.
-        // Can slow down up to 30% for database changes scattered accross its memory.
-        // (any small change causes the sqlite to rewrite the whole page)
-        db.pragma_update(None, "page_size", &4096 as &dyn ToSql)
-            .unwrap();
-
-        // reduce locks and unlocks, since the canister is the only user of the database with no concurrent connections,
-        // there is no need to lock and unlock the database for each of the queries.
-        // Note: For this mode it is important that the database is unlocked before upgrading the canister
-        // by explicitly destroying the connection in the pre_upgrade hook, otherwise the lock file
-        // will be present after upgrade, and it won't be possible to open a new connection later on.
-        db.pragma_update(None, "locking_mode", &"EXCLUSIVE" as &dyn ToSql)
-            .unwrap();
-
-        // temp_store = MEMORY, this disables creating temp files on the disk during complex queries,
-        // this workaround is currently necessary to avoid the error when sqlite tries to create a temporary file and breaks
-        db.pragma_update(None, "temp_store", &"MEMORY" as &dyn ToSql)
-            .unwrap();
-
-        // Add this option to minimize disk reads and work in canister memory instead.
-        // Some operations like batch insertions can have lower performance with this option.
-        // Some operations related to adding indexed records have better performance.
-        db.pragma_update(None, "cache_size", &1000000 as &dyn ToSql)
-            .unwrap();
-    });
-}
-
-fn mount_memory_files() {
-    MEMORY_MANAGER.with(|m| {
-        let m = m.borrow();
-
-        // mount virtual memory as file for faster DB operations
-        // This ensures 2% to 40% performance improvement
-        ic_wasi_polyfill::mount_memory_file(
-            DB_FILE_NAME,
-            Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID))),
-        );
-
-        // 5 - 7% performance improvement on some operations
-        ic_wasi_polyfill::mount_memory_file(
-            JOURNAL_NAME,
-            Box::new(m.get(MemoryId::new(MOUNTED_MEMORY_ID + 1))),
-        );
-    });
-}
-
 #[ic_cdk::query]
 fn query(sql: String) -> QueryResult {
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        let db = db.as_mut().unwrap();
-
-        let mut stmt = db.prepare(&sql).unwrap();
+    with_connection(|conn| {
+        let mut stmt = conn.prepare(&sql).unwrap();
         let cnt = stmt.column_count();
 
         let mut rows = stmt.query([]).unwrap();
@@ -125,7 +40,7 @@ fn query(sql: String) -> QueryResult {
                 },
                 Err(err) => {
                     return Err(Error::CanisterError {
-                        message: format!("{:?}", err),
+                        message: format!("{err:?}"),
                     })
                 }
             }
@@ -135,32 +50,9 @@ fn query(sql: String) -> QueryResult {
 }
 
 fn execute(sql: &str) {
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        let db = db.as_mut().unwrap();
-        db.execute(sql, ()).unwrap();
-    });
-}
-
-fn init_polyfill() {
-    MEMORY_MANAGER.with(|m| {
-        let m = m.borrow();
-        ic_wasi_polyfill::init_with_memory_manager(&[0u8; 32], &[], &m, 200..210);
-    });
-}
-
-fn open_database() {
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        *db = Some(Connection::open(DB_FILE_NAME).unwrap());
-    });
-}
-
-fn close_database() {
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        *db = None;
-    });
+    with_connection(|conn| {
+        conn.execute(sql, ()).unwrap();
+    })
 }
 
 fn create_tables() {
@@ -195,18 +87,7 @@ fn create_indices() {
 
 #[ic_cdk::init]
 fn init() {
-    setup_runtime();
     create_tables();
-}
-
-#[ic_cdk::pre_upgrade]
-fn pre_upgrade() {
-    close_database();
-}
-
-#[ic_cdk::post_upgrade]
-fn post_upgrade() {
-    setup_runtime();
 }
 
 #[derive(CandidType, Deserialize, Debug)]
@@ -217,10 +98,8 @@ enum Error {
 
 #[ic_cdk::update]
 fn add_users(offset: usize, count: usize) -> Result {
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        let db = db.as_mut().unwrap();
-        let tx = db.transaction().unwrap();
+    with_connection(|mut conn| {
+        let tx = conn.transaction().unwrap();
 
         let sql = String::from("insert into users (username, email) values (?, ?)");
 
@@ -231,10 +110,10 @@ fn add_users(offset: usize, count: usize) -> Result {
 
             while i < count {
                 let id = offset + i + 1;
-                let username = format!("user{}", id);
-                let email = format!("user{}@example.com", id);
+                let username = format!("user{id}");
+                let email = format!("user{id}@example.com");
 
-                stmt.execute(rusqlite::params![username, email])
+                stmt.execute(ic_rusqlite::rusqlite::params![username, email])
                     .expect("insert of a user failed!");
 
                 i += 1;
@@ -249,10 +128,8 @@ fn add_users(offset: usize, count: usize) -> Result {
 
 #[ic_cdk::update]
 fn add_orders(offset: usize, count: usize, id_mod: usize) -> Result {
-    DB.with(|db| {
-        let mut db = db.borrow_mut();
-        let db = db.as_mut().unwrap();
-        let tx = db.transaction().unwrap();
+    with_connection(|mut conn| {
+        let tx = conn.transaction().unwrap();
 
         let sql = String::from("insert into orders (user_id, amount) values (?, ?)");
 
@@ -264,12 +141,13 @@ fn add_orders(offset: usize, count: usize, id_mod: usize) -> Result {
             while i < count {
                 let id = (offset + i + 1) * 13 % id_mod + 1;
 
-                stmt.execute(rusqlite::params![id, (id * 100 + id * 17) / 15])
-                    .unwrap_or_else(|_| {
-                        panic!(
-                            "insertion of a new order failed: i = {i} count = {count} id = {id}!"
-                        )
-                    });
+                stmt.execute(ic_rusqlite::rusqlite::params![
+                    id,
+                    (id * 100 + id * 17) / 15
+                ])
+                .unwrap_or_else(|_| {
+                    panic!("insertion of a new order failed: i = {i} count = {count} id = {id}!")
+                });
 
                 i += 1;
             }
