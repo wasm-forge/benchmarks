@@ -16,7 +16,8 @@ hex = "0.4.3"
 serde = "1.0.164"
 serde_json = "1.0.97"
 
-ic-rusqlite = {version = "0.2.0" }
+#ic-rusqlite = {version = "0.2.0" }
+ic-rusqlite = { path = "../../../../ic-rusqlite"}
 
 [build-dependencies]
 glob = "0.3"

@@ -1,0 +1,11 @@
+
+service : () -> {
+  download_database : () -> (blob) query;
+  execute_batch : (text) -> ();
+  get_db_size : () -> (nat64);
+  first_bytes : () -> (text);
+  get_tables : () -> (vec text);
+  "query" : (text) -> (vec vec opt text) query;
+  upload_database : (blob) -> ();
+  close_database : () -> ();
+}

@@ -1,5 +1,0 @@
-[workspace]
-members = [
-    "src/ic-rusqlite-large-base-backend"
-]
-resolver = "2"

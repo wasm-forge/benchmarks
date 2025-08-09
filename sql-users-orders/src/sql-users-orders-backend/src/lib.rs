@@ -1,7 +1,7 @@
 use candid::CandidType;
 use candid::Deserialize;
 
-use ic_rusqlite::rusqlite::types::Type;
+use ic_rusqlite::types::Type;
 
 use ic_rusqlite::with_connection;
 
@@ -113,7 +113,7 @@ fn add_users(offset: usize, count: usize) -> Result {
                 let username = format!("user{id}");
                 let email = format!("user{id}@example.com");
 
-                stmt.execute(ic_rusqlite::rusqlite::params![username, email])
+                stmt.execute(ic_rusqlite::params![username, email])
                     .expect("insert of a user failed!");
 
                 i += 1;
@@ -141,13 +141,12 @@ fn add_orders(offset: usize, count: usize, id_mod: usize) -> Result {
             while i < count {
                 let id = (offset + i + 1) * 13 % id_mod + 1;
 
-                stmt.execute(ic_rusqlite::rusqlite::params![
-                    id,
-                    (id * 100 + id * 17) / 15
-                ])
-                .unwrap_or_else(|_| {
-                    panic!("insertion of a new order failed: i = {i} count = {count} id = {id}!")
-                });
+                stmt.execute(ic_rusqlite::params![id, (id * 100 + id * 17) / 15])
+                    .unwrap_or_else(|_| {
+                        panic!(
+                            "insertion of a new order failed: i = {i} count = {count} id = {id}!"
+                        )
+                    });
 
                 i += 1;
             }

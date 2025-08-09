@@ -22,3 +22,7 @@ Cargo.lock
 
 
 **/.canbench/
+
+*.db
+chinook.zip
+args.txt
