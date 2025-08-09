@@ -2,7 +2,6 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io::Read;
 use std::io::Write;
-use std::path::Path;
 
 use ic_cdk::export_candid;
 
@@ -177,6 +176,36 @@ fn get_tables() -> Vec<String> {
         let res: Vec<String> = table_names.filter_map(Result::ok).collect();
         res
     })
+}
+
+#[ic_cdk::update]
+pub fn add_users(offset: usize, count: usize) -> u64 {
+    with_connection(|mut conn| {
+        let tx = conn.transaction().unwrap();
+
+        let sql = String::from("insert into users (username, email) values (?, ?)");
+
+        {
+            let mut stmt = tx.prepare_cached(&sql).unwrap();
+
+            let mut i = 0;
+
+            while i < count {
+                let id = offset + i + 1;
+                let username = format!("user{id}");
+                let email = format!("user{id}@example.com");
+
+                stmt.execute(ic_rusqlite::params![username, email])
+                    .expect("insert of a user failed!");
+
+                i += 1;
+            }
+        }
+
+        tx.commit().expect("COMMIT USER INSERTION FAILED!");
+    });
+
+    0
 }
 
 /*
