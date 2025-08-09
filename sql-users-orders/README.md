@@ -4,15 +4,24 @@ This project benchmarks `ic-rusqlite` dependency on a benchmark canister.
 
 ## Prerequisites
 
-It is assumed that you have [rust](https://doc.rust-lang.org/book/ch01-01-installation.html), 
-[dfx](https://internetcomputer.org/docs/current/developer-docs/setup/install/).
+- [rust](https://doc.rust-lang.org/book/ch01-01-installation.html), 
+- [dfx](https://internetcomputer.org/docs/current/developer-docs/setup/install/).
 
-You will also need the Wasm-oriented [clang](https://github.com/WebAssembly/wasi-sdk/releases/) installation. 
+### Setting Up the Environment
 
-Install wasi2ic and canbench:
-```bash
-  cargo install wasi2ic
-  cargo install canbench
+You can setup your build environment via script:
+```sh
+curl -fsSL https://raw.githubusercontent.com/wasm-forge/ic-rusqlite/main/prepare.sh | sh
+```
+
+The script will:
+- install `wasi2ic`: `cargo install wasi2ic`
+- install WASI target: `rustup target add wasm32-wasip1`
+- download `WASI-SDK` and WASI-oriented `clang`: [WASI-SDK](https://github.com/WebAssembly/wasi-sdk/releases/). 
+- after confirmation, it will define necessary variables in your `.bashrc`:
+```sh
+export WASI_SDK=<path to wasi-sdk>
+export PATH=$WASI_SDK/bin:$PATH
 ```
 
 

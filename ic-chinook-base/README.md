@@ -18,11 +18,14 @@ The script will:
 - install `wasi2ic`: `cargo install wasi2ic`
 - install WASI target: `rustup target add wasm32-wasip1`
 - download `WASI-SDK` and WASI-oriented `clang`: [WASI-SDK](https://github.com/WebAssembly/wasi-sdk/releases/). 
-- Finally, after confirmation, it will define necessary variables in your `.bashrc`:
+- after confirmation, it will define necessary variables in your `.bashrc`:
 ```sh
 export WASI_SDK=<path to wasi-sdk>
 export PATH=$WASI_SDK/bin:$PATH
 ```
+## Chinook Database
+
+![Chinook Entity Relationship Diagram](img/chinook-erd.png)
 
 ## Deploy canister
 
