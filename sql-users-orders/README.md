@@ -55,7 +55,7 @@ CREATE TABLE orders (
 );
 ```
 
-![Users-Orders Entity Relationship Diagram](/img/users-orders.png)
+![Users-Orders Entity Relationship Diagram](img/users-orders.png)
 
 ## Benchmark results
 
