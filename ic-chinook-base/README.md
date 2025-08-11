@@ -46,6 +46,18 @@ Download the Chinook database from the [SQLite tutorial](https://www.sqlitetutor
 ./scripts/sample_download.sh
 ```
 
+## Upload database structure into your canister:
+```sh
+./scripts/upload_db.sh
+```
 
-## Database structure
+## Fill table with data:
+```sh
+./scripts/fill_data.sh
+```
+
+## Launch the benchmarks:
+```sh
+./scripts/bench.sh
+```
 

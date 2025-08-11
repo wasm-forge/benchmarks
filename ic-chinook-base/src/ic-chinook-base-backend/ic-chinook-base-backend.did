@@ -5,7 +5,9 @@ service : () -> {
   get_db_size : () -> (nat64);
   first_bytes : () -> (text);
   get_tables : () -> (vec text);
-  "query" : (text) -> (vec vec opt text) query;
+  "query" : (text) -> (vec vec opt text);
   upload_database : (blob) -> ();
   close_database : () -> ();
+  add_customers : (nat64) -> (nat64);
+  create_chinook_indices : () -> ();
 }

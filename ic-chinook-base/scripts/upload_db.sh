@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Upload the Chinook database into the canister
+
 set -e
 
 file=chinook.db
@@ -16,6 +18,5 @@ echo -n '" )' >> args.txt
 
 # upload DB
 dfx canister call chinook_base upload_database --argument-file args.txt
-
 
 
