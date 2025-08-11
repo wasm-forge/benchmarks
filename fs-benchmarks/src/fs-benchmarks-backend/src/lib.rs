@@ -1,4 +1,3 @@
-use ic_stable_structures::memory_manager::MemoryId;
 use ic_stable_structures::memory_manager::MemoryManager;
 use ic_stable_structures::DefaultMemoryImpl;
 
@@ -13,6 +12,8 @@ use stable_fs::fs::Whence;
 use stable_fs::error::Error;
 
 use stable_fs::storage::stable::StableStorage;
+
+#[allow(unused_imports)]
 use stable_fs::storage::types::FileType;
 
 use std::cell::RefCell;
@@ -26,7 +27,9 @@ thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
         RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 
+    #[allow(unused_variables)]
     static FS: RefCell<FileSystem> = {
+
 
         MEMORY_MANAGER.with(|m| {
 
@@ -35,6 +38,7 @@ thread_local! {
             //v0.4
             //let storage = StableStorage::new_with_memory_manager(&memory_manager, 200u8);
             //v0.5, v0.6 ...
+            #[allow(unused_mut)]
             let mut storage = StableStorage::new_with_memory_manager(&memory_manager, 200..210u8);
 
             // set chunk version to V1
@@ -299,7 +303,7 @@ pub fn store_buffer_in_1000b_segments_10_files(filename: String) -> (u64, usize)
                 let fd = open_file(
                     &mut fs,
                     root_fd,
-                    &format!("{}{}", filename, i),
+                    &format!("{filename}{i}"),
                     FdStat::default(),
                     OpenFlags::CREATE,
                     42,
@@ -465,7 +469,7 @@ pub fn load_buffer_in_1000b_segments_10_files(filename: String) -> (u64, usize) 
                 let fd = open_file(
                     &mut fs,
                     root_fd,
-                    &format!("{}{}", filename, i),
+                    &format!("{filename}{i}"),
                     FdStat::default(),
                     OpenFlags::CREATE,
                     42,
