@@ -1,6 +1,6 @@
 {
   "canisters": {
-    "backend": {
+    "sql-users-orders-backend": {
       "candid": "src/sql-users-orders-backend/sql-users-orders-backend.did",
       "package": "sql-users-orders-backend",
       "build": [

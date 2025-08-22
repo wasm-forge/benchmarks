@@ -10,14 +10,14 @@ crate-type = ["cdylib"]
 
 [dependencies]
 canbench-rs = { version = "0.2.1"}
-candid = "=0.10.14"
+candid = "0.10.17"
 ic-cdk = "0.18.5"
 hex = "0.4.3"
 serde = "1.0.164"
 serde_json = "1.0.97"
 
-#ic-rusqlite = {version = "0.3.0" }
-ic-rusqlite = { path = "../../../../ic-rusqlite" }
+ic-rusqlite = {version = "0.3.1" }
+
 
 [build-dependencies]
 glob = "0.3"

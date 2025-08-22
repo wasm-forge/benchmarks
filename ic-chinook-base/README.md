@@ -39,25 +39,9 @@ Deploy thoe canister:
 dfx deploy
 ```
 
-## Download database
+## Launch benchmark
 
-Download the Chinook database from the [SQLite tutorial](https://www.sqlitetutorial.net/) site:
+Launch all benchmark steps:
 ```sh
-./scripts/sample_download.sh
+./scripts/all.sh
 ```
-
-## Upload database structure into your canister:
-```sh
-./scripts/upload_db.sh
-```
-
-## Fill table with data:
-```sh
-./scripts/fill_data.sh
-```
-
-## Launch the benchmarks:
-```sh
-./scripts/bench.sh
-```
-

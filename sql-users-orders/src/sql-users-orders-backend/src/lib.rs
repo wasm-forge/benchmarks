@@ -55,6 +55,7 @@ fn execute(sql: &str) {
     })
 }
 
+#[ic_cdk::update]
 fn create_tables() {
     execute(
         "
@@ -80,6 +81,7 @@ fn create_tables() {
     );
 }
 
+#[ic_cdk::update]
 fn create_indices() {
     execute("CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);");
     execute("CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);");
@@ -90,6 +92,11 @@ fn init() {
     create_tables();
 }
 
+#[ic_cdk::post_upgrade]
+fn post_upgrade() {
+    init();
+}
+
 #[derive(CandidType, Deserialize, Debug)]
 enum Error {
     InvalidCanister,
@@ -97,7 +104,7 @@ enum Error {
 }
 
 #[ic_cdk::update]
-fn add_users(offset: usize, count: usize) -> Result {
+fn add_users(offset: u64, count: u64) -> Result {
     with_connection(|mut conn| {
         let tx = conn.transaction().unwrap();
 
@@ -127,7 +134,7 @@ fn add_users(offset: usize, count: usize) -> Result {
 }
 
 #[ic_cdk::update]
-fn add_orders(offset: usize, count: usize, id_mod: usize) -> Result {
+fn add_orders(offset: u64, count: u64, id_mod: u64) -> Result {
     with_connection(|mut conn| {
         let tx = conn.transaction().unwrap();
 
@@ -162,7 +169,7 @@ mod benches {
     use super::*;
     use canbench_rs::{bench, bench_fn, BenchResult};
 
-    const COUNT: usize = 1000000usize;
+    const COUNT: u64 = 1000000u64;
 
     #[bench(raw)]
     fn bench_add_users() -> BenchResult {

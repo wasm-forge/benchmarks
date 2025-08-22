@@ -6,7 +6,6 @@ use std::io::Write;
 use ic_cdk::export_candid;
 
 use ic_rusqlite::close_connection;
-use ic_rusqlite::get_db_path;
 use ic_rusqlite::types::Type;
 use ic_rusqlite::with_connection;
 
@@ -47,6 +46,12 @@ fn query(sql: String) -> Vec<Vec<Option<String>>> {
     println!("Query {}\n execution time: {}", sql, end - start);
 
     res
+}
+
+fn get_db_path() -> String {
+    let config = ic_rusqlite::get_connection_config();
+
+    config.db_file_name
 }
 
 #[ic_cdk::update]
@@ -230,7 +235,7 @@ fn add_customers(offset: u64) -> u64 {
 
                 //
                 let end = ic_instruction_counter();
-                if end - start > 20000000000 {
+                if end - start > 15000000000 || i > 25000 {
                     break;
                 }
             }

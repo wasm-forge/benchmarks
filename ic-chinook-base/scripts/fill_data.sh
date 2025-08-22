@@ -19,6 +19,9 @@ PER=100000
 
 while [ $COUNTER -lt $TOTAL ];
 do
+
+    dfx canister deposit-cycles --all 200000000000
+
     CUR=`expr $COUNTER + $PER`
     echo "--- ${CUR} ---"
 
@@ -30,9 +33,15 @@ do
     count=`dfx canister call chinook_base query '("select count(*) from customers")'`
     echo "count: $count" 
 
-    COUNTER=`expr $COUNTER + $PER`
+    # extract the number (between quotes)
+    num=$(echo "$count" | grep -oP '"\K[0-9]+(?=")')
 
-    dfx canister deposit-cycles --all 100000000000
+    # check if it's greater than 1000000
+    if (( num > 1000000 )); then
+        exit 0
+    fi    
+
+    COUNTER=`expr $COUNTER + $PER`
 
 done
 
