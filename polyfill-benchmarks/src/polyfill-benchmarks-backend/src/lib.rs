@@ -39,12 +39,10 @@ pub fn list_folders(path: String) -> Vec<String> {
 
     // get all the files and folders and return their names
     if let Ok(entries) = fs::read_dir(path) {
-        for entry in entries {
-            if let Ok(entry) = entry {
-                // Push the folder name to the vector
-                if let Some(name) = entry.file_name().to_str() {
-                    folder_names.push(name.to_string());
-                }
+        for entry in entries.flatten() {
+            // Push the folder name to the vector
+            if let Some(name) = entry.file_name().to_str() {
+                folder_names.push(name.to_string());
             }
         }
     }
@@ -60,12 +58,10 @@ mod benches {
     fn create_1000_folders() -> BenchResult {
         let file_name = "dir";
 
-        let res = bench_fn(|| {
+        bench_fn(|| {
             // bench
             create_folders(file_name.to_string(), 1000);
-        });
-
-        res
+        })
     }
 
     #[bench(raw)]
@@ -74,12 +70,10 @@ mod benches {
         let file_name2 = "dir999/dir";
         create_folders(file_name.to_string(), 1000);
 
-        let res = bench_fn(|| {
+        bench_fn(|| {
             // bench
             create_folders(file_name2.to_string(), 1000);
-        });
-
-        res
+        })
     }
 
     #[bench(raw)]
@@ -88,11 +82,9 @@ mod benches {
 
         create_folders(file_name.to_string(), 1000);
 
-        let res = bench_fn(|| {
+        bench_fn(|| {
             // bench
             list_folders(".".to_string());
-        });
-
-        res
+        })
     }
 }
