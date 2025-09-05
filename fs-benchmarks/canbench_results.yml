@@ -1,74 +1,79 @@
 benches:
+  create_1000_folders:
+    total:
+      calls: 1
+      instructions: 22133691931
+      heap_increase: 21
+      stable_memory_increase: 1153
+    scopes: {}
+  create_1000_folders_1000_subfolders:
+    total:
+      calls: 1
+      instructions: 65251493187
+      heap_increase: 0
+      stable_memory_increase: 256
+    scopes: {}
   read_100mb:
     total:
-      start_instructions: 6160227771
       calls: 1
-      instructions: 125170678
+      instructions: 123041297
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   read_100mb_in_segments:
     total:
-      start_instructions: 3798792383
       calls: 1
-      instructions: 522710737
+      instructions: 512369679
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   read_100mb_in_segments_from_10_files:
     total:
-      start_instructions: 3206829551
       calls: 1
-      instructions: 634579284
+      instructions: 627975067
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   write_100mb:
     total:
-      start_instructions: 5345433171
       calls: 1
-      instructions: 714794614
+      instructions: 617391013
       heap_increase: 0
       stable_memory_increase: 1536
     scopes: {}
   write_100mb_in_segments:
     total:
-      start_instructions: 2235432448
       calls: 1
-      instructions: 1457616073
+      instructions: 1356961866
       heap_increase: 0
       stable_memory_increase: 1536
     scopes: {}
   write_100mb_in_segments_10_files:
     total:
-      start_instructions: 1567767931
       calls: 1
-      instructions: 1539061743
+      instructions: 1434047444
       heap_increase: 0
       stable_memory_increase: 2433
     scopes: {}
   write_100mb_in_segments_over_existing:
     total:
-      start_instructions: 3698791828
       calls: 1
-      instructions: 529070587
+      instructions: 523417260
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   write_100mb_in_segments_over_existing_10_files:
     total:
-      start_instructions: 3810378634
       calls: 1
-      instructions: 668030191
+      instructions: 663257943
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   write_100mb_over_existing:
     total:
-      start_instructions: 2950226818
       calls: 1
-      instructions: 125581805
+      instructions: 123464734
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
-version: 0.1.16
+version: 0.2.1

@@ -30,7 +30,6 @@ thread_local! {
     #[allow(unused_variables)]
     static FS: RefCell<FileSystem> = {
 
-
         MEMORY_MANAGER.with(|m| {
 
             let memory_manager = m.borrow();
@@ -80,6 +79,10 @@ fn open_file(
     fs.open(root_fd, filename, fdstat, open_flags, ctime)
     // below v0.7
     //fs.open_or_create(root_fd, filename, fdstat, open_flags, ctime)
+}
+
+fn mkdir(fs: &mut FileSystem, root_fd: Fd, filename: &str) {
+    let _ = fs.mkdir(root_fd, filename, FdStat::default(), 0);
 }
 
 fn file_size(filename: String) -> usize {
@@ -518,6 +521,26 @@ pub fn load_buffer_in_1000b_segments_10_files(filename: String) -> (u64, usize) 
     (etime - stime, res)
 }
 
+pub fn create_folders(filename: String, count: u32) -> u64 {
+    let stime = instruction_counter();
+
+    FS.with(|fs| {
+        let mut fs = fs.borrow_mut();
+
+        let root_fd = (*fs).root_fd();
+
+        for i in 0..count {
+            let name = format!("{filename}{i}");
+
+            mkdir(&mut fs, root_fd, &name);
+        }
+    });
+
+    let etime = instruction_counter();
+
+    etime - stime
+}
+
 mod benches {
     use super::*;
     use canbench_rs::{bench, bench_fn, BenchResult};
@@ -676,5 +699,27 @@ mod benches {
         check_buffer("abc1234567".to_string(), 10_000_000);
 
         res
+    }
+
+    #[bench(raw)]
+    fn create_1000_folders() -> BenchResult {
+        let file_name = "dir";
+
+        bench_fn(|| {
+            // bench
+            create_folders(file_name.to_string(), 1000);
+        })
+    }
+
+    #[bench(raw)]
+    fn create_1000_folders_1000_subfolders() -> BenchResult {
+        let file_name = "dir";
+        let file_name2 = "dir99/dir";
+        create_folders(file_name.to_string(), 1000);
+
+        bench_fn(|| {
+            // bench
+            create_folders(file_name2.to_string(), 1000);
+        })
     }
 }

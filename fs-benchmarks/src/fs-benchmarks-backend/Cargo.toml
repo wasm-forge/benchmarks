@@ -14,4 +14,5 @@ ic-cdk-timers = "0.12"
 ic-stable-structures = "0.7.0"
 
 # change to see the performance improvement
-stable-fs = "0.9.0"
+#satble-fs = "0.9.0"
+stable-fs = {path = "../../../../stable-fs/stable-fs"}

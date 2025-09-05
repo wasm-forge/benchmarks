@@ -1,0 +1,23 @@
+benches:
+  create_1000_folders:
+    total:
+      calls: 1
+      instructions: 22352690189
+      heap_increase: 7
+      stable_memory_increase: 256
+    scopes: {}
+  create_1000_folders_1000_subfolders:
+    total:
+      calls: 1
+      instructions: 66476109082
+      heap_increase: 0
+      stable_memory_increase: 256
+    scopes: {}
+  list_1000_folders:
+    total:
+      calls: 1
+      instructions: 2749459529
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+version: 0.2.1

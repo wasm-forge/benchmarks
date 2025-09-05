@@ -1,0 +1,7 @@
+build_cmd: |
+  cargo build --release --target wasm32-wasip1
+  wasi2ic target/wasm32-wasip1/release/polyfill_benchmarks_backend.wasm target/wasm32-wasip1/release/no_wasi.wasm
+
+wasm_path:
+  target/wasm32-wasip1/release/no_wasi.wasm
+
