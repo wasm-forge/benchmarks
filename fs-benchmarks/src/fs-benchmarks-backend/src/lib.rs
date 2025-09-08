@@ -55,10 +55,12 @@ thread_local! {
             if USE_MOUNTED_MEMORY {
                 let filename = "file.txt";
 
-                //fs.borrow_mut().mount_memory_file(filename, Box::new(memory_manager.get(MemoryId::new(15)))).unwrap();
+                fs.borrow_mut().mount_memory_file(filename, Box::new(memory_manager.get(ic_stable_structures::memory_manager::MemoryId::new(15))),
+                    stable_fs::storage::types::MountedFileSizePolicy::PreviousOrZero).unwrap();
 
                 for i in 0..FILES_COUNT {
-                //    fs.borrow_mut().mount_memory_file(&format!("{}{}", filename, i), Box::new(memory_manager.get(MemoryId::new(15 + i as u8)))).unwrap();
+                    fs.borrow_mut().mount_memory_file(&format!("{}{}", filename, i), Box::new(memory_manager.get(ic_stable_structures::memory_manager::MemoryId::new(15 + i as u8))),
+                    stable_fs::storage::types::MountedFileSizePolicy::PreviousOrZero).unwrap();
                 }
             }
 

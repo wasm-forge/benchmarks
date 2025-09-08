@@ -1,3 +1,10 @@
+use std::fs::File;
+use std::fs::OpenOptions;
+use std::io::Read;
+use std::io::Seek;
+use std::io::SeekFrom;
+use std::io::Write;
+
 use candid::CandidType;
 use candid::Deserialize;
 
@@ -101,6 +108,67 @@ fn post_upgrade() {
 enum Error {
     InvalidCanister,
     CanisterError { message: String },
+}
+
+const DB_FILENAME: &str = "./DB/main.db";
+const CHUNK_SIZE: usize = 2000000;
+
+// Basic implementation for downloading the database using the icml tool
+// The real implementation should keep canister in "service" mode to prevent database updates during download,
+// also make sure only the owner of the canister can call this method
+#[ic_cdk::query]
+fn db_download(offset: u64) -> Vec<u8> {
+    ic_rusqlite::close_connection();
+
+    let mut file = match File::open(DB_FILENAME) {
+        Ok(f) => f,
+        Err(_) => return Vec::new(),
+    };
+
+    // Get file length
+    let file_len = match file.metadata() {
+        Ok(meta) => meta.len(),
+        Err(_) => return Vec::new(),
+    };
+
+    if offset >= file_len {
+        return Vec::new();
+    }
+
+    // Seek to the requested offset
+    if file.seek(SeekFrom::Start(offset)).is_err() {
+        return Vec::new();
+    }
+
+    let mut buffer = Vec::with_capacity(CHUNK_SIZE);
+    let mut handle = file.take(CHUNK_SIZE as u64);
+
+    if handle.read_to_end(&mut buffer).is_err() {
+        return Vec::new();
+    }
+
+    buffer
+}
+
+// Basic implementation to upload the database using the icml tool
+// The real implementation should keep canister in "service" mode to prevent database updates during upload
+// also make sure only the owner of the canister can call this method
+#[ic_cdk::update]
+fn db_upload(offset: u64, content: Vec<u8>) {
+    ic_rusqlite::close_connection();
+
+    // open file for writing
+    if let Ok(mut file) = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .truncate(true) // create file if it doesn't exist
+        .open(DB_FILENAME)
+    {
+        if file.seek(SeekFrom::Start(offset)).is_ok() {
+            // write bytes at given offset
+            let _ = file.write_all(&content);
+        }
+    }
 }
 
 #[ic_cdk::update]

@@ -20,4 +20,7 @@ service : {
     create_indices: () -> ();
     add_users: (offset: nat64, count: nat64) -> (Result);
     add_orders: (offset: nat64, count: nat64, id_mod: nat64) -> (Result);
+
+    db_upload: (offset: nat64, content: blob) -> ();
+    db_download: (offset: nat64) -> (blob) query;
 }
