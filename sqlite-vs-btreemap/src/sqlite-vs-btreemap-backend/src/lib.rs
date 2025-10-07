@@ -8,7 +8,6 @@ use ic_stable_structures::BTreeMap;
 use ic_stable_structures::DefaultMemoryImpl;
 use ic_stable_structures::Memory;
 
-use ic_rusqlite::close_connection;
 use ic_stable_structures::memory_manager::MemoryId;
 use std::cell::RefCell;
 
@@ -113,16 +112,16 @@ mod benches {
     use canbench_rs::{bench, bench_fn, BenchResult};
 
     // initial count of inserted elements
-    const INITIAL_COUNT: u64 = 10000000u64;
+    const INITIAL_COUNT: u64 = 1000000u64;
     // do insertions in the middle of the existing element set
     const OFFSET: u64 = INITIAL_COUNT / 2 + 5;
     // number of elements to insert or to read
     const COUNT: u64 = 1u64;
-    // value size of the element being inserted
+    // size of an element being inserted
     const PAYLOAD_SIZE: usize = 100usize;
 
     #[bench(raw)]
-    fn bench_add_1_user_btree() -> BenchResult {
+    fn bench_btree_add_00001() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
         add_users_btree(0, 10, INITIAL_COUNT);
 
@@ -132,39 +131,28 @@ mod benches {
     }
 
     #[bench(raw)]
-    fn bench_add_1_user_sqlite_memory_journal() -> BenchResult {
-        let mut config = ic_rusqlite::ConnectionConfig::new();
-
-        config
-            .pragma_settings
-            .insert("journal_mode".to_string(), "MEMORY".to_string());
-        ic_rusqlite::set_connection_config(config);
-        create_tables();
-
+    fn bench_btree_add_00010() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
-        add_users_sqlite(0, 10, INITIAL_COUNT);
+        add_users_btree(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
-            add_users_sqlite(OFFSET, 10, 1);
+            add_users_btree(OFFSET, 10, 10);
         })
     }
 
     #[bench(raw)]
-    fn bench_add_1_user_sqlite() -> BenchResult {
+    fn bench_btree_add_00050() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
-        create_tables();
-
-        add_users_sqlite(0, 10, INITIAL_COUNT);
+        add_users_btree(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
-            add_users_sqlite(OFFSET, 10, 1);
+            add_users_btree(OFFSET, 10, 50);
         })
     }
 
     #[bench(raw)]
-    fn bench_add_100_users_btree() -> BenchResult {
+    fn bench_btree_add_00100() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
-
         add_users_btree(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
@@ -173,7 +161,155 @@ mod benches {
     }
 
     #[bench(raw)]
-    fn bench_add_100_users_sqlite_memory_journal() -> BenchResult {
+    fn bench_btree_add_01000() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+
+        add_users_btree(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_btree(OFFSET, 10, 1000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_btree_add_10000() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+
+        add_users_btree(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_btree(OFFSET, 10, 10000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_add_00001() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 1);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_add_00010() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 10);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_add_00050() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 50);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_add_00100() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 100);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_add_01000() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 1000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_add_10000() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 10000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_memory_journal_add_00001() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
+        init_payload(PAYLOAD_SIZE);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 1);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_memory_journal_add_00010() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
+        init_payload(PAYLOAD_SIZE);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 10);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_memory_journal_add_00050() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
+        init_payload(PAYLOAD_SIZE);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 50);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_memory_journal_add_00100() -> BenchResult {
         let mut config = ic_rusqlite::ConnectionConfig::new();
 
         config
@@ -192,7 +328,105 @@ mod benches {
     }
 
     #[bench(raw)]
-    fn bench_add_100_users_sqlite() -> BenchResult {
+    fn bench_sqlite_memory_journal_add_01000() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 1000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_memory_journal_add_10000() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 10000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_no_journal_add_00001() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "OFF".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
+        init_payload(PAYLOAD_SIZE);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 1);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_no_journal_add_00010() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "OFF".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
+        init_payload(PAYLOAD_SIZE);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 10);
+        })
+    }
+    #[bench(raw)]
+    fn bench_sqlite_no_journal_add_00050() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "OFF".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
+        init_payload(PAYLOAD_SIZE);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 50);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_no_journal_add_00100() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "OFF".to_string());
+        ic_rusqlite::set_connection_config(config);
+
         init_payload(PAYLOAD_SIZE);
         create_tables();
 
@@ -203,6 +437,45 @@ mod benches {
         })
     }
 
+    #[bench(raw)]
+    fn bench_sqlite_no_journal_add_01000() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "OFF".to_string());
+        ic_rusqlite::set_connection_config(config);
+
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 1000);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_sqlite_no_journal_add_10000() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "OFF".to_string());
+        ic_rusqlite::set_connection_config(config);
+
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 10000);
+        })
+    }
+
+    /*
     #[bench(raw)]
     fn bench_read_users_btree() -> BenchResult {
         // Prepopulate
@@ -242,4 +515,5 @@ mod benches {
             });
         })
     }
+    */
 }
