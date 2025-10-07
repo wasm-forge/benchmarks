@@ -1,7 +1,6 @@
 # `sqlite-vs-btreemap`
 
-This project compares `sqlite` performance against similar problems solved using `btreemap`.
-
+This project compares `SQLite` performance against `StableBTreeMap`.
 
 
 ## Prerequisites
@@ -9,12 +8,17 @@ This project compares `sqlite` performance against similar problems solved using
 - [rust](https://doc.rust-lang.org/book/ch01-01-installation.html), 
 - [dfx](https://internetcomputer.org/docs/current/developer-docs/setup/install/).
 
-Install `wasi2ic` and canbench:
+Install `wasi2ic` and `canbench`:
 ```bash
 cargo install wasi2ic
 
 cargo install canbench
 ```
 
-## 
+## Run benchmark
+
+To run the benchmark:
+```bash
+cargo canbench
+```
 

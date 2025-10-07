@@ -475,7 +475,6 @@ mod benches {
         })
     }
 
-    /*
     #[bench(raw)]
     fn bench_read_users_btree() -> BenchResult {
         // Prepopulate
@@ -500,7 +499,6 @@ mod benches {
         create_tables();
 
         add_users_sqlite(OFFSET, 10, COUNT);
-        close_connection(); // clear cache
         add_users_sqlite(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
@@ -515,5 +513,4 @@ mod benches {
             });
         })
     }
-    */
 }
