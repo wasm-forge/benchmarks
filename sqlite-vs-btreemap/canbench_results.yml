@@ -41,129 +41,143 @@ benches:
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
+  bench_read_users_btree:
+    total:
+      calls: 1
+      instructions: 37888
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_read_users_sqlite:
+    total:
+      calls: 1
+      instructions: 36720
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
   bench_sqlite_add_00001:
     total:
       calls: 1
-      instructions: 407462
+      instructions: 407495
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_add_00010:
     total:
       calls: 1
-      instructions: 407462
+      instructions: 407495
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_add_00050:
     total:
       calls: 1
-      instructions: 453089
+      instructions: 453298
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_add_00100:
     total:
       calls: 1
-      instructions: 529542
+      instructions: 529971
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_add_01000:
     total:
       calls: 1
-      instructions: 2334600
+      instructions: 2338989
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_add_10000:
     total:
       calls: 1
-      instructions: 20441029
+      instructions: 20485018
       heap_increase: 2
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_memory_journal_add_00001:
     total:
       calls: 1
-      instructions: 202686
+      instructions: 202719
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_memory_journal_add_00010:
     total:
       calls: 1
-      instructions: 202686
+      instructions: 202719
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_memory_journal_add_00050:
     total:
       calls: 1
-      instructions: 248313
+      instructions: 248522
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_memory_journal_add_00100:
     total:
       calls: 1
-      instructions: 324840
+      instructions: 325269
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_memory_journal_add_01000:
     total:
       calls: 1
-      instructions: 2064459
+      instructions: 2068848
       heap_increase: 0
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_memory_journal_add_10000:
     total:
       calls: 1
-      instructions: 18909213
+      instructions: 18953202
       heap_increase: 3
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_no_journal_add_00001:
     total:
       calls: 1
-      instructions: 149520
+      instructions: 149553
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_no_journal_add_00010:
     total:
       calls: 1
-      instructions: 149520
+      instructions: 149553
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_no_journal_add_00050:
     total:
       calls: 1
-      instructions: 195171
+      instructions: 195380
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_no_journal_add_00100:
     total:
       calls: 1
-      instructions: 271660
+      instructions: 272089
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_no_journal_add_01000:
     total:
       calls: 1
-      instructions: 1993575
+      instructions: 1997964
       heap_increase: 1
       stable_memory_increase: 0
     scopes: {}
   bench_sqlite_no_journal_add_10000:
     total:
       calls: 1
-      instructions: 18612903
+      instructions: 18656892
       heap_increase: 2
       stable_memory_increase: 0
     scopes: {}
