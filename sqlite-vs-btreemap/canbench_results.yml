@@ -1,0 +1,58 @@
+benches:
+  bench_add_100_users_btree:
+    total:
+      calls: 1
+      instructions: 627549
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_100_users_sqlite:
+    total:
+      calls: 1
+      instructions: 534081
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_100_users_sqlite_memory_journal:
+    total:
+      calls: 1
+      instructions: 329994
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_1_user_btree:
+    total:
+      calls: 1
+      instructions: 57301
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_1_user_sqlite:
+    total:
+      calls: 1
+      instructions: 405892
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_add_1_user_sqlite_memory_journal:
+    total:
+      calls: 1
+      instructions: 201805
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_read_users_btree:
+    total:
+      calls: 1
+      instructions: 44287
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+  bench_read_users_sqlite:
+    total:
+      calls: 1
+      instructions: 37255
+      heap_increase: 0
+      stable_memory_increase: 0
+    scopes: {}
+version: 0.2.1

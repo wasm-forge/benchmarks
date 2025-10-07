@@ -1,15 +1,14 @@
 use candid::CandidType;
 use candid::Deserialize;
 
-use ic_rusqlite::types::Type;
 use ic_rusqlite::with_connection;
 use ic_stable_structures::memory_manager::MemoryManager;
 use ic_stable_structures::memory_manager::VirtualMemory;
 use ic_stable_structures::BTreeMap;
 use ic_stable_structures::DefaultMemoryImpl;
 use ic_stable_structures::Memory;
-use ic_stable_structures::StableBTreeMap;
 
+use ic_rusqlite::close_connection;
 use ic_stable_structures::memory_manager::MemoryId;
 use std::cell::RefCell;
 
@@ -21,7 +20,7 @@ enum Error {
 
 type Result<T = String, E = Error> = std::result::Result<T, E>;
 
-type QueryResult<T = Vec<Vec<Option<String>>>, E = Error> = std::result::Result<T, E>;
+const PROFILING: MemoryId = MemoryId::new(50);
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -53,19 +52,19 @@ fn init_payload(size: usize) {
 
 #[ic_cdk::update]
 fn create_tables() {
-    with_connection(|mut conn| {
-        conn.execute("CREATE TABLE IF NOT EXISTS users ( id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL)", ());
+    with_connection(|conn| {
+        conn.execute("CREATE TABLE IF NOT EXISTS users ( id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL)", ()).unwrap();
     });
+}
+
+pub fn profiling_init() {
+    let memory = MEMORY_MANAGER.with(|m| m.borrow().get(PROFILING));
+    memory.grow(4096);
 }
 
 #[ic_cdk::init]
 fn init() {
-    create_tables();
-}
-
-#[ic_cdk::post_upgrade]
-fn post_upgrade() {
-    init();
+    profiling_init();
 }
 
 fn for_each_user(offset: u64, increment: u64, count: u64, mut f: impl FnMut(u64)) {
@@ -89,38 +88,7 @@ fn add_users_btree(offset: u64, increment: u64, count: u64) {
 }
 
 #[ic_cdk::update]
-fn add_users_naive(offset: u64, increment: u64, count: u64) {
-    PAYLOAD.with_borrow(|payload| {
-        with_connection(|mut conn| {
-            for_each_user(offset, increment, count, |id| {
-                conn.execute(
-                    "insert into users (id, username) values (?, ?);",
-                    (&id, payload),
-                );
-            })
-        })
-    })
-}
-
-#[ic_cdk::update]
-fn add_users_stored(offset: u64, increment: u64, count: u64) {
-    PAYLOAD.with_borrow(|payload| {
-        with_connection(|mut conn| {
-            let mut i = 0;
-
-            let mut stmt = conn
-                .prepare("INSERT INTO users (id, username) VALUES (?1, ?2);")
-                .expect("prepare failed");
-
-            for_each_user(offset, increment, count, |id| {
-                stmt.execute((&id, payload));
-            });
-        })
-    })
-}
-
-#[ic_cdk::update]
-fn add_users_bulk(offset: u64, increment: u64, count: u64) {
+fn add_users_sqlite(offset: u64, increment: u64, count: u64) {
     PAYLOAD.with_borrow(|payload| {
         with_connection(|mut conn| {
             let tx = conn.transaction().unwrap();
@@ -128,8 +96,6 @@ fn add_users_bulk(offset: u64, increment: u64, count: u64) {
 
             {
                 let mut stmt = tx.prepare_cached(&sql).unwrap();
-
-                let mut i = 0;
 
                 for_each_user(offset, increment, count, |id| {
                     stmt.execute((id, payload))
@@ -146,51 +112,94 @@ mod benches {
     use super::*;
     use canbench_rs::{bench, bench_fn, BenchResult};
 
-    const INITIAL_COUNT: u64 = 100000u64;
-
+    // initial count of inserted elements
+    const INITIAL_COUNT: u64 = 10000000u64;
+    // do insertions in the middle of the existing element set
     const OFFSET: u64 = INITIAL_COUNT / 2 + 5;
-    const COUNT: u64 = 1000u64;
-    const PAYLOAD_SIZE: usize = 1000usize;
+    // number of elements to insert or to read
+    const COUNT: u64 = 1u64;
+    // value size of the element being inserted
+    const PAYLOAD_SIZE: usize = 100usize;
 
     #[bench(raw)]
-    fn bench_add_users_btree() -> BenchResult {
+    fn bench_add_1_user_btree() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
         add_users_btree(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
-            add_users_btree(OFFSET, 10, COUNT);
-        })
-    }
-
-    /*
-    #[bench(raw)]
-    fn bench_add_users_naive() -> BenchResult {
-        init_payload(PAYLOAD_SIZE);
-        add_users_naive(0, 10, INITIAL_COUNT);
-
-        bench_fn(|| {
-            add_users_naive(OFFSET, 10, COUNT);
+            add_users_btree(OFFSET, 10, 1);
         })
     }
 
     #[bench(raw)]
-    fn bench_add_users_stored() -> BenchResult {
+    fn bench_add_1_user_sqlite_memory_journal() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+        create_tables();
+
         init_payload(PAYLOAD_SIZE);
-        add_users_stored(0, 10, INITIAL_COUNT);
+        add_users_sqlite(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
-            add_users_stored(OFFSET, 10, COUNT);
+            add_users_sqlite(OFFSET, 10, 1);
         })
     }
-    */
 
     #[bench(raw)]
-    fn bench_add_users_bulk() -> BenchResult {
+    fn bench_add_1_user_sqlite() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
-        add_users_bulk(0, 10, INITIAL_COUNT);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
-            add_users_bulk(OFFSET, 10, COUNT);
+            add_users_sqlite(OFFSET, 10, 1);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_add_100_users_btree() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+
+        add_users_btree(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_btree(OFFSET, 10, 100);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_add_100_users_sqlite_memory_journal() -> BenchResult {
+        let mut config = ic_rusqlite::ConnectionConfig::new();
+
+        config
+            .pragma_settings
+            .insert("journal_mode".to_string(), "MEMORY".to_string());
+        ic_rusqlite::set_connection_config(config);
+
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 100);
+        })
+    }
+
+    #[bench(raw)]
+    fn bench_add_100_users_sqlite() -> BenchResult {
+        init_payload(PAYLOAD_SIZE);
+        create_tables();
+
+        add_users_sqlite(0, 10, INITIAL_COUNT);
+
+        bench_fn(|| {
+            add_users_sqlite(OFFSET, 10, 100);
         })
     }
 
@@ -198,7 +207,9 @@ mod benches {
     fn bench_read_users_btree() -> BenchResult {
         // Prepopulate
         init_payload(PAYLOAD_SIZE);
-        add_users_btree(OFFSET, 10, COUNT);
+        create_tables();
+
+        add_users_btree(OFFSET, 100, COUNT);
         add_users_btree(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
@@ -211,20 +222,22 @@ mod benches {
     }
 
     #[bench(raw)]
-    fn bench_read_users_bulk() -> BenchResult {
+    fn bench_read_users_sqlite() -> BenchResult {
         init_payload(PAYLOAD_SIZE);
-        add_users_bulk(OFFSET, 10, COUNT);
-        add_users_bulk(0, 10, INITIAL_COUNT);
+        create_tables();
+
+        add_users_sqlite(OFFSET, 10, COUNT);
+        close_connection(); // clear cache
+        add_users_sqlite(0, 10, INITIAL_COUNT);
 
         bench_fn(|| {
-            with_connection(|mut conn| {
-                let tx = conn.transaction().unwrap();
-                let mut stmt = tx
+            with_connection(|conn| {
+                let mut stmt = conn
                     .prepare_cached("SELECT username FROM users WHERE id = ?1")
                     .unwrap();
+
                 for_each_user(OFFSET, 10, COUNT, |id| {
-                    let _: Result<Vec<String>, _> =
-                        stmt.query_map((&id,), |row| row.get(0)).unwrap().collect();
+                    let _row: String = stmt.query_row((&id,), |row| row.get(0)).unwrap();
                 });
             });
         })
